@@ -47,7 +47,7 @@ public class LoginScene {
         Label passwordLabel = new Label("CNP:");
         PasswordField passwordField = new PasswordField();
         Button loginButton = new Button("Login");
-        Button signUpButton=new Button("Sign Up");
+        Button signUpButton = new Button("Sign Up");
         Label messageLabel = new Label();
         //logica butonului Sign Up
         signUpButton.setOnAction(e -> {
@@ -107,66 +107,62 @@ public class LoginScene {
      * Metodă pentru autentificarea utilizatorului folosind baza de date
      */
     private void authenticateUser(String email, String cnp, Stage primaryStage) {
-        // Interogare care combină rezultatele din ambele tabele folosind UNION
-        String query = "SELECT 'client' AS tip, Email, CNP FROM Clienti WHERE Email = ? AND CNP = ? " +
+        String query = "SELECT 'client' AS tip, Email, CNP, NULL AS Pozitie " +
+                "FROM Clienti WHERE CNP = ? " +
                 "UNION " +
-                "SELECT 'utilizator' AS tip, Email, CNP, Pozitie FROM Utilizator WHERE Email = ? AND CNP = ?";
+                "SELECT 'utilizator' AS tip, Email, CNP, Pozitie " +
+                "FROM Utilizator WHERE CNP = ?";
 
         try (Connection connection = MyConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 
-            // Setează parametrii pentru interogare
-            preparedStatement.setString(1, email);  // Pentru Clienti
-            preparedStatement.setString(2, cnp);    // Pentru Clienti
-            preparedStatement.setString(3, email);  // Pentru Utilizator
-            preparedStatement.setString(4, cnp);    // Pentru Utilizator
+            preparedStatement.setString(1, cnp);  // Pentru Clienti
+            preparedStatement.setString(2, cnp);  // Pentru Utilizator
 
-            // Execută interogarea
-            System.out.println("Executing query: " + query);
             ResultSet resultSet = preparedStatement.executeQuery();
 
-            // Verifică dacă există un utilizator care se potrivește
             if (resultSet.next()) {
                 String tip = resultSet.getString("tip");
+                String pozitie = resultSet.getString("Pozitie");
 
                 if ("client".equals(tip)) {
-                    // Dacă este client, redirecționează către dashboard-ul clientului
-                    primaryStage.setScene(new ClientDashboardScene(primaryStage).getScene());
+                    System.out.println("Client autentificat.");
+                    // Pass client CNP and connection to ClientDashboardScene
+                    primaryStage.setScene(new ClientDashboardScene(primaryStage, connection, cnp).getScene());
                 } else if ("utilizator".equals(tip)) {
-                    String pozitie = resultSet.getString("Pozitie");
-
-                    // În funcție de poziția utilizatorului, redirecționează la dashboard-ul corespunzător
-                    switch (pozitie.toLowerCase()) {
-                        case "medic":
-                            primaryStage.setScene(new MedicDashboardScene(primaryStage).getScene());
-                            break;
-                        case "asistent medical":
-                            primaryStage.setScene(new AsistentMedicalDashboardScene(primaryStage).getScene());
-                            break;
-                        case "expert contabil":
-                            primaryStage.setScene(new ExpertContabilDashboardScene(primaryStage).getScene());
-                            break;
-                        case "inspector resurse umane":
-                            primaryStage.setScene(new InspectorResurseUmaneDashboardScene(primaryStage).getScene());
-                            break;
-                        case "receptioner":
-                            primaryStage.setScene(new ReceptionerDashboardScene(primaryStage).getScene());
-                            break;
-                        default:
-                            System.out.println("Poziție necunoscută.");
-                            break;
+                    if (pozitie != null) {
+                        switch (pozitie.toLowerCase()) {
+                            case "medic":
+                                primaryStage.setScene(new MedicDashboardScene(primaryStage).getScene());
+                                break;
+                            case "asistent medical":
+                                primaryStage.setScene(new AsistentMedicalDashboardScene(primaryStage).getScene());
+                                break;
+                            case "expert contabil":
+                                primaryStage.setScene(new ExpertContabilDashboardScene(primaryStage).getScene());
+                                break;
+                            case "inspector resurse umane":
+                                primaryStage.setScene(new InspectorResurseUmaneDashboardScene(primaryStage).getScene());
+                                break;
+                            case "receptioner":
+                                primaryStage.setScene(new ReceptionerDashboardScene(primaryStage).getScene());
+                                break;
+                            default:
+                                System.out.println("Poziție necunoscută pentru utilizator.");
+                                break;
+                        }
+                    } else {
+                        System.out.println("Poziție necunoscută.");
                     }
                 }
             } else {
-                System.out.println("User not found.");
-                // Poți adăuga un mesaj de eroare pe interfața de login aici
+                System.out.println("CNP necunoscut.");
             }
 
         } catch (Exception e) {
             System.err.println("Eroare la autentificare: " + e.getMessage());
         }
     }
-
 
 
 }
