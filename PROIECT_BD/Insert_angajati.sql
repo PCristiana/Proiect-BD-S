@@ -1,38 +1,26 @@
-use MedicalCenterBD;
-
-INSERT INTO Departamente (id_departament, nume_departament)
-VALUES
-(1, 'Resurse Umane'),
-(2, 'Contabilitate'),
-(3, 'Personal Medical');
+-- actualizat ca sa fie in configuratie cu utilizatorii inregistrati deja
 
 INSERT INTO Angajati (id_angajat, CNP, id_departament, salariu_negociat, ore_lucrate)
 VALUES
-(1, '2234567890001', 1, 8500.00, 160),
-(2, '2234567890002', 2, 4000.00, 140),
-(3, '2234567890003', 3, 3000.00, 150),
-(4, '2234567890004', 1, 9500.00, 170),
-(5, '2234567890005', 2, 4200.00, 160),
-(6, '2234567890006', 1, 8700.00, 150),
-(7, '2234567890007', 2, 3100.00, 160),
-(8, '2234567890008', 3, 4000.00, 140),
-(9, '2234567890009', 2, 9600.00, 170),
-(10, '2234567890010', 1, 3300.00, 160),
-(11, '2234567890011', 1, 8900.00, 150),
-(12, '2234567890012', 2, 4300.00, 140);
+(1, '3134567891005', 3, 8500.00, 160), -- medic
+(7, '4134567892001', 3, 5000.00, 140),-- medic
+(3, '4134567892004', 3, 6000.00, 150),-- medic
+(4, '4134567892006', 3, 9500.00, 170),-- medic
+(9, '4134567892009', 3, 6200.00, 160),-- medic
+(6, '4134567892011', 3, 8700.00, 150),-- medic
+(13, '6031224010377', 3, 5500.00, 130),-- medic
+(2, '4134567892002', 3, 6100.00, 160),-- asistent**
+(8, '4134567892005', 3, 4700.00, 140),-- asistent*
+(5, '4134567892008', 3, 6800.00, 170),-- asistent*
+(10, '4134567892012', 3, 6300.00, 160),-- asistent*
+(11, '3134567891003', 3, 5900.00, 150), -- asistent*
+(12, '3134567891001', 2, 4300.00, 140), -- expert contabil
+(14, '3134567891004', 2, 5400.00, 175), -- expert contabil
+(15,'3134567891002',1,3900.00,140),   -- Inspector resurse umane
+(16,'3134567891006',1,4500.00,165),  -- Inspector resurse umane
+(17,'4134567892003',1,4700.00,175), -- Inspector resurse umane
+(18,'4134567892007',1,4000.00,150), -- receptioner, intrat la departament de resurse umane
+(19,'4134567892010',1,4800.00,170); -- receptioner, intrat la departament de resurse umane
 
-
-INSERT INTO AsistentiMedicali (id_asistent, id_angajat, tip_asistent, grad)
-VALUES
-(1, 2, 'generalist', 'principal'), -- Asistent generalist, principal
-(2, 5, 'laborator', 'secundar'), -- Asistent laborator, secundar
-(3, 8, 'radiologie', 'principal'); -- Asistent radiologie, principal
-
-
-INSERT INTO Medic (id_medic, id_angajat, specialitate, grad, cod_parafa, competente, titlu_stiintific, post_didactic, procent_servicii)
-VALUES
-(1, 1, 'Cardiologie', 'specialist', 'PARAFA001', 'Echocardiografie, Teste de efort', 'doctor', 'lector', 25.00), -- Medic specialist cardiolog
-(2, 4, 'Pediatrie', 'primar', 'PARAFA002', 'Consultatii copii, Urgente pediatrice', 'doctor', 'profesor', 30.00), -- Medic primar pediatru
-(3, 6, 'Dermatologie', 'specialist', 'PARAFA003', 'Dermatoscopie, Biopsii cutanate', 'doctorand', 'asistent', 20.00); -- Medic specialist dermatolog
 
 
