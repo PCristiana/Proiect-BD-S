@@ -1,3 +1,4 @@
+// merge conectarea, se salveaza conectarile, mai e nevoie d earanjare in pagina si sa faci bonurile si sa mai adaugi ceva cand afisezi pacientii
 package com.example.tryout;
 
 import javafx.geometry.Insets;
@@ -72,11 +73,10 @@ public class ReceptionerDashboardScene {
         Label emailLabel = new Label("Email: ");
         Label adresaLabel = new Label("Adresă: ");
         Label ibanLabel = new Label("IBAN: ");
-        Label dataAngajareLabel = new Label("Data Angajării: ");
 
 // Încărcarea datelor personale din baza de date
         try (PreparedStatement stmt = connection.prepareStatement("SELECT * FROM utilizator WHERE CNP = ?")) {
-            stmt.setString(1, "CNP-ul_utilizatorului");  // Înlocuiește cu CNP-ul utilizatorului logat
+            stmt.setString(1, "4134567892007");  // Înlocuiește cu CNP-ul utilizatorului logat
             var resultSet = stmt.executeQuery();
             if (resultSet.next()) {
                 cnpLabel.setText("CNP: " + resultSet.getString("CNP"));
@@ -86,14 +86,14 @@ public class ReceptionerDashboardScene {
                 emailLabel.setText("Email: " + resultSet.getString("email"));
                 adresaLabel.setText("Adresă: " + resultSet.getString("adresa"));
                 ibanLabel.setText("IBAN: " + resultSet.getString("IBAN"));
-                dataAngajareLabel.setText("Data Angajării: " + resultSet.getDate("data_angajare").toLocalDate());
+
             }
         } catch (SQLException e) {
             System.err.println("Eroare la încărcarea datelor personale: " + e.getMessage());
         }
 
 // Adăugarea etichetelor în panoul de date personale
-        personalDataBox.getChildren().addAll(cnpLabel, numeLabel, prenumeLabel, contactLabel, emailLabel, adresaLabel, ibanLabel, dataAngajareLabel);
+        personalDataBox.getChildren().addAll(cnpLabel, numeLabel, prenumeLabel, contactLabel, emailLabel, adresaLabel, ibanLabel);
 
 // Adăugarea panoului în dashboard
         root.getChildren().add(personalDataBox);
@@ -320,7 +320,7 @@ public class ReceptionerDashboardScene {
         TextField emailField = new TextField();
         TextField adresaField = new TextField();
         TextField ibanField = new TextField();
-        DatePicker dataAngajarePicker = new DatePicker();
+
 
         // Popularea câmpurilor cu datele existente ale recepționerului
         try (PreparedStatement stmt = connection.prepareStatement("SELECT * FROM utilizator WHERE CNP = ?")) {
@@ -334,7 +334,7 @@ public class ReceptionerDashboardScene {
                 emailField.setText(resultSet.getString("email"));
                 adresaField.setText(resultSet.getString("adresa"));
                 ibanField.setText(resultSet.getString("IBAN"));
-                dataAngajarePicker.setValue(resultSet.getDate("data_angajare").toLocalDate());
+
             }
         } catch (SQLException e) {
             System.err.println("Eroare la încărcarea datelor personale: " + e.getMessage());
@@ -353,16 +353,16 @@ public class ReceptionerDashboardScene {
             String email = emailField.getText();
             String adresa = adresaField.getText();
             String iban = ibanField.getText();
-            LocalDate dataAngajare = dataAngajarePicker.getValue();
+
 
             // Verifică dacă toate câmpurile sunt completate
-            if (cnp.isEmpty() || nume.isEmpty() || prenume.isEmpty() || contact.isEmpty() || email.isEmpty() || adresa.isEmpty() || iban.isEmpty() || dataAngajare == null) {
+            if (cnp.isEmpty() || nume.isEmpty() || prenume.isEmpty() || contact.isEmpty() || email.isEmpty() || adresa.isEmpty() || iban.isEmpty() ) {
                 showAlert(Alert.AlertType.ERROR, "Eroare", "Toate câmpurile trebuie completate.");
                 return;
             }
 
             // Actualizează datele în baza de date
-            updatePersonalData(finalConnection, cnp, nume, prenume, contact, email, adresa, iban, dataAngajare);
+            updatePersonalData(finalConnection, cnp, nume, prenume, contact, email, adresa, iban);
             primaryStage.setScene(this.scene); // Revenire la dashboard
         });
 
@@ -373,14 +373,14 @@ public class ReceptionerDashboardScene {
         HBox buttonBox = new HBox(10, saveButton, cancelButton);
         buttonBox.setAlignment(Pos.CENTER);
 
-        formRoot.getChildren().addAll(formTitle, cnpField, numeField, prenumeField, contactField, emailField, adresaField, ibanField, dataAngajarePicker, buttonBox);
+        formRoot.getChildren().addAll(formTitle, cnpField, numeField, prenumeField, contactField, emailField, adresaField, ibanField, buttonBox);
 
         Scene formScene = new Scene(formRoot, 600, 500);
         primaryStage.setScene(formScene);
     }
 
-    private void updatePersonalData(Connection connection, String cnp, String nume, String prenume, String contact, String email, String adresa, String iban, LocalDate dataAngajare) {
-        String query = "UPDATE Recepționer SET nume = ?, prenume = ?, contact = ?, email = ?, adresa = ?, IBAN = ?, data_angajare = ? WHERE CNP = ?";
+    private void updatePersonalData(Connection connection, String cnp, String nume, String prenume, String contact, String email, String adresa, String iban) {
+        String query = "UPDATE Recepționer SET nume = ?, prenume = ?, contact = ?, email = ?, adresa = ?, IBAN = ? WHERE CNP = ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, nume);
@@ -389,7 +389,6 @@ public class ReceptionerDashboardScene {
             stmt.setString(4, email);
             stmt.setString(5, adresa);
             stmt.setString(6, iban);
-            stmt.setDate(7, java.sql.Date.valueOf(dataAngajare));
             stmt.setString(8, cnp);
 
             int rowsUpdated = stmt.executeUpdate();
