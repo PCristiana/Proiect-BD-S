@@ -1,2 +1,0 @@
-
-SELECT * FROM Utilizator WHERE CNP = '1234567890001';
